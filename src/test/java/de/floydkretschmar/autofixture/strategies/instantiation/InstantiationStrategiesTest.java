@@ -20,18 +20,19 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-class InstantiationStrategyRegistryTest {
+class InstantiationStrategiesTest {
     @Mock
     private InstantiationStrategy instantiationStrategy;
+
     @Test
     public void createInstancee_WhenAnyCreationStrategySuccessful_ShouldCreateInstance() {
         final var expectedFixture = TestClass.builder().build();
         when(instantiationStrategy.createInstance(TestClass.class)).thenReturn(Optional.of(expectedFixture));
         final var failingCreationStrategy = mock(InstantiationStrategy.class);
         when(failingCreationStrategy.createInstance(any())).thenReturn(Optional.empty());
-        final var registry = InstantiationStrategyRegistry.builder().instantiationStrategies(List.of(failingCreationStrategy, instantiationStrategy)).build();
+        final var strategies = new InstantiationStrategies(List.of(failingCreationStrategy, instantiationStrategy));
 
-        final var actualFixture = registry.createInstance(TestClass.class);
+        final var actualFixture = strategies.createInstance(TestClass.class);
 
         assertThat(actualFixture, equalTo(expectedFixture));
     }
@@ -40,9 +41,9 @@ class InstantiationStrategyRegistryTest {
     public void createFixture_WhenAllCreationStrategiesUnsuccessful_ShouldThrowFixtureCreationException() {
         final var failingCreationStrategy = mock(InstantiationStrategy.class);
         when(failingCreationStrategy.createInstance(any())).thenReturn(Optional.empty());
-        final var registry = InstantiationStrategyRegistry.builder().instantiationStrategies(List.of(failingCreationStrategy)).build();
+        final var strategies = new InstantiationStrategies(List.of(failingCreationStrategy));
 
-        final var exception = assertThrows(FixtureCreationException.class, () -> registry.createInstance(TestClass.class));
+        final var exception = assertThrows(FixtureCreationException.class, () -> strategies.createInstance(TestClass.class));
         assertThat(exception.getMessage(), containsString("None of the registered creation strategies"));
     }
 }

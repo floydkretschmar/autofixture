@@ -1,22 +1,20 @@
 package de.floydkretschmar.autofixture.strategies.instantiation;
 
 import de.floydkretschmar.autofixture.FixtureCreationException;
-import lombok.Builder;
-import lombok.NonNull;
-import lombok.Singular;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
-@Builder()
-public class InstantiationStrategyRegistry {
-    @Singular
-    @NonNull
-    private List<InstantiationStrategy> instantiationStrategies;
+public class InstantiationStrategies extends ArrayList<InstantiationStrategy> {
 
-    public  <T> T createInstance(Class<T> fixtureClass) {
+    public InstantiationStrategies(Collection<? extends InstantiationStrategy> strategies) {
+        super(strategies);
+    }
+
+    public <T> T createInstance(Class<T> fixtureClass) {
         Optional<T> instance = Optional.empty();
-        for (final var creationStrategy : instantiationStrategies) {
+        for (final var creationStrategy : this) {
             instance = creationStrategy.createInstance(fixtureClass);
             if (instance.isPresent()) break;
         }

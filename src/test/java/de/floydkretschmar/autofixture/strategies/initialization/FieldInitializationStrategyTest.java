@@ -2,7 +2,7 @@ package de.floydkretschmar.autofixture.strategies.initialization;
 
 import de.floydkretschmar.autofixture.common.TestClass;
 import de.floydkretschmar.autofixture.common.TestClassNested;
-import de.floydkretschmar.autofixture.strategies.instantiation.InstantiationStrategyRegistry;
+import de.floydkretschmar.autofixture.strategies.instantiation.InstantiationStrategies;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,11 +24,11 @@ class FieldInitializationStrategyTest {
     private FieldInitializationStrategy strategy;
 
     @Mock
-    private InstantiationStrategyRegistry instantiationStrategyRegistry;
+    private InstantiationStrategies instantiationStrategies;
 
     @BeforeEach
     public void setUp() {
-        strategy = new FieldInitializationStrategy(instantiationStrategyRegistry);
+        strategy = new FieldInitializationStrategy(instantiationStrategies);
     }
     @Test
     public void initializeInstance_WhenCalled_ShouldInitializeFixtureWithSpecifiedValues() {
@@ -56,7 +56,7 @@ class FieldInitializationStrategyTest {
 
     @Test
     public void createFixture_WhenFieldIsComplexType_ShouldCreateFixtureRecursively() {
-        when(instantiationStrategyRegistry.createInstance(TestClass.class)).thenReturn(TestClass.builder().build());
+        when(instantiationStrategies.createInstance(TestClass.class)).thenReturn(TestClass.builder().build());
         when(properties.getProperty("stringProperty")).thenReturn("abc");
         when(properties.getProperty("nestedProperty.testProperty")).thenReturn("true");
         when(properties.getProperty("nestedProperty.testNumberProperty")).thenReturn("123");

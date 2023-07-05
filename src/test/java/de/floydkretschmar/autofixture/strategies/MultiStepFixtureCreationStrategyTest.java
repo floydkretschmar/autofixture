@@ -2,7 +2,7 @@ package de.floydkretschmar.autofixture.strategies;
 
 import de.floydkretschmar.autofixture.common.TestClass;
 import de.floydkretschmar.autofixture.strategies.initialization.InitializationStrategy;
-import de.floydkretschmar.autofixture.strategies.instantiation.InstantiationStrategyRegistry;
+import de.floydkretschmar.autofixture.strategies.instantiation.InstantiationStrategies;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -21,7 +21,7 @@ class MultiStepFixtureCreationStrategyTest {
     private InitializationStrategy initializationStrategy;
 
     @Mock
-    private InstantiationStrategyRegistry registry;
+    private InstantiationStrategies strategies;
 
     @Mock
     private Properties fixtureValues;
@@ -29,12 +29,12 @@ class MultiStepFixtureCreationStrategyTest {
     @Test
     public void createFixture_WhenCalled_ShouldCreateAndInitializeInstance() {
         final var expectedInstance = TestClass.builder().testProperty(true).testNumberProperty(123).build();
-        when(registry.createInstance(any())).thenReturn(expectedInstance);
-        final var strategy = MultiStepFixtureCreationStrategy.builder().initializationStrategy(initializationStrategy).instantiationStrategyRegistry(registry).build();
+        when(strategies.createInstance(any())).thenReturn(expectedInstance);
+        final var strategy = MultiStepFixtureCreationStrategy.builder().initializationStrategy(initializationStrategy).instantiationStrategies(strategies).build();
 
         strategy.createFixture(TestClass.class, fixtureValues);
 
-        verify(registry).createInstance(TestClass.class);
+        verify(strategies).createInstance(TestClass.class);
         verify(initializationStrategy).initializeInstance(expectedInstance, fixtureValues);
     }
 }
