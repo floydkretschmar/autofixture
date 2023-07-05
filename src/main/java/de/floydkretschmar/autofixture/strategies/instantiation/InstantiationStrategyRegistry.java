@@ -2,22 +2,17 @@ package de.floydkretschmar.autofixture.strategies.instantiation;
 
 import de.floydkretschmar.autofixture.FixtureCreationException;
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.Singular;
 
 import java.util.List;
 import java.util.Optional;
 
-@Builder(builderMethodName = "")
+@Builder()
 public class InstantiationStrategyRegistry {
     @Singular
+    @NonNull
     private List<InstantiationStrategy> fallbackInstantiationStrategies;
-
-    public static InstantiationStrategyRegistryBuilder builder(List<InstantiationStrategy> fallbackInstantiationStrategies) {
-        if (fallbackInstantiationStrategies == null || fallbackInstantiationStrategies.isEmpty())
-            throw new IllegalArgumentException("At least one fallback instantiation strategy has to be registered");
-
-        return new InstantiationStrategyRegistryBuilder().fallbackInstantiationStrategies(fallbackInstantiationStrategies);
-    }
 
     public  <T> T createInstance(Class<T> fixtureClass) {
         Optional<T> instance = Optional.empty();

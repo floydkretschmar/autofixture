@@ -29,7 +29,7 @@ class InstantiationStrategyRegistryTest {
         when(instantiationStrategy.createInstance(TestClass.class)).thenReturn(Optional.of(expectedFixture));
         final var failingCreationStrategy = mock(InstantiationStrategy.class);
         when(failingCreationStrategy.createInstance(any())).thenReturn(Optional.empty());
-        final var registry = InstantiationStrategyRegistry.builder(List.of(failingCreationStrategy, instantiationStrategy)).build();
+        final var registry = InstantiationStrategyRegistry.builder().fallbackInstantiationStrategies(List.of(failingCreationStrategy, instantiationStrategy)).build();
 
         final var actualFixture = registry.createInstance(TestClass.class);
 
@@ -40,15 +40,9 @@ class InstantiationStrategyRegistryTest {
     public void createFixture_WhenAllCreationStrategiesUnsuccessful_ShouldThrowFixtureCreationException() {
         final var failingCreationStrategy = mock(InstantiationStrategy.class);
         when(failingCreationStrategy.createInstance(any())).thenReturn(Optional.empty());
-        final var registry = InstantiationStrategyRegistry.builder(List.of(failingCreationStrategy)).build();
+        final var registry = InstantiationStrategyRegistry.builder().fallbackInstantiationStrategies(List.of(failingCreationStrategy)).build();
 
         final var exception = assertThrows(FixtureCreationException.class, () -> registry.createInstance(TestClass.class));
         assertThat(exception.getMessage(), containsString("None of the registered creation strategies"));
-    }
-
-    @Test
-    public void createFixture_WhenNoCreationStrategiesRegistered_ShouldThrowIllegalArgumentException() {
-        final var exception = assertThrows(IllegalArgumentException.class, () -> InstantiationStrategyRegistry.builder(List.of()));
-        assertThat(exception.getMessage(), equalTo("At least one fallback instantiation strategy has to be registered"));
     }
 }

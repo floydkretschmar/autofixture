@@ -11,8 +11,7 @@ import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 import java.util.Arrays;
 
 @RequiredArgsConstructor
-
-public class AutofixtureInitializer implements TestInstancePostProcessor {
+public class AutofixtureExtension implements TestInstancePostProcessor {
 
     private final FixtureFactory fixtureFactory;
 

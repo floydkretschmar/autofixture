@@ -20,18 +20,20 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AutofixtureInitializerTest {
+public class AutofixtureExtensionTest {
 
-    @Mock private FixtureFactory fixtureFactory;
+    @Mock
+    private FixtureFactory fixtureFactory;
 
-    @Mock private ExtensionContext extensionContext;
+    @Mock
+    private ExtensionContext extensionContext;
     @Captor
     ArgumentCaptor<Properties> fixtureValuesCaptor;
 
     @Test
     public void postProcessTestInstance_WhenTestInstanceHasAutofixtureAnnotations_shouldInitializeFixtures() {
         when(fixtureFactory.createFixture(any(), any())).thenReturn(TestClass.builder().build());
-        final var initializer = new AutofixtureInitializer(fixtureFactory);
+        final var initializer = new AutofixtureExtension(fixtureFactory);
 
         initializer.postProcessTestInstance(new TestInstance(), extensionContext);
 
@@ -44,7 +46,7 @@ public class AutofixtureInitializerTest {
 
     @Test
     public void postProcessTestInstance_WhenTestInstanceHasNoAutofixtureAnnotations_shouldDoNothing() {
-        final var initializer = new AutofixtureInitializer(fixtureFactory);
+        final var initializer = new AutofixtureExtension(fixtureFactory);
 
         initializer.postProcessTestInstance(new TestInstanceWithoutAnnotation(), extensionContext);
 
