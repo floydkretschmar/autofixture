@@ -1,4 +1,4 @@
-package de.floydkretschmar.autofixture.strategies;
+package de.floydkretschmar.autofixture.strategies.instantiation;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;

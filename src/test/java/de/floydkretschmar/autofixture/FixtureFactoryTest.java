@@ -2,7 +2,7 @@ package de.floydkretschmar.autofixture;
 
 import de.floydkretschmar.autofixture.common.TestClass;
 import de.floydkretschmar.autofixture.common.TestClassNested;
-import de.floydkretschmar.autofixture.strategies.InstantiationStrategy;
+import de.floydkretschmar.autofixture.strategies.instantiation.InstantiationStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,9 +13,10 @@ import java.util.Optional;
 import java.util.Properties;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

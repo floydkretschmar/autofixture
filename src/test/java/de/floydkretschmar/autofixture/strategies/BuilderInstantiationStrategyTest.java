@@ -1,12 +1,13 @@
 package de.floydkretschmar.autofixture.strategies;
 
 import de.floydkretschmar.autofixture.common.TestClass;
+import de.floydkretschmar.autofixture.strategies.instantiation.BuilderInstantiationStrategy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 
 class BuilderInstantiationStrategyTest {
 

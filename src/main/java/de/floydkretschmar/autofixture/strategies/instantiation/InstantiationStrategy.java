@@ -1,4 +1,4 @@
-package de.floydkretschmar.autofixture.strategies;
+package de.floydkretschmar.autofixture.strategies.instantiation;
 
 import java.util.Optional;
 

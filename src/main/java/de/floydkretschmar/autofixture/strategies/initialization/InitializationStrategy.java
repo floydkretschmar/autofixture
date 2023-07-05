@@ -1,4 +1,4 @@
-package de.floydkretschmar.autofixture.strategies;
+package de.floydkretschmar.autofixture.strategies.initialization;
 
 import java.util.Properties;
 

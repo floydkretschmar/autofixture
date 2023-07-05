@@ -1,17 +1,16 @@
-package de.floydkretschmar.autofixture.strategies;
+package de.floydkretschmar.autofixture.strategies.initialization;
 
-import de.floydkretschmar.autofixture.FixtureCreationException;
+import de.floydkretschmar.autofixture.strategies.instantiation.InstantiationStrategyRegistry;
 import de.floydkretschmar.autofixture.utils.FieldHelper;
 import lombok.RequiredArgsConstructor;
 
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.util.Properties;
-import java.util.function.Function;
 
 @RequiredArgsConstructor
 public class FieldInitializationStrategy implements InitializationStrategy {
-    private final Function<Class<?>, InstantiationStrategy> instantiationStrategySelector;
+    private final InstantiationStrategyRegistry strategyRegistry;
     @Override
     public <T> void initializeInstance(T instance, Properties instanceValues) {
         initializeInstance(instance, "", instanceValues);
@@ -32,13 +31,10 @@ public class FieldInitializationStrategy implements InitializationStrategy {
             }
             else {
                 final var fieldType = declaredField.getType();
-                final var instanceCreator = instantiationStrategySelector.apply(fieldType);
-                final var valueOptional = instanceCreator.createInstance(fieldType);
+                final var valueOptional = strategyRegistry.createInstance(fieldType);
 
-                if (valueOptional.isEmpty()) throw new FixtureCreationException("Field %s could not be initialized because instantiation of class %s failed".formatted(newQualifiedFieldName, fieldType.getSimpleName()));
-
-                initializeInstance(valueOptional.get(), newQualifiedFieldName, instanceValues);
-                FieldHelper.setField(declaredField, instance, valueOptional.get());
+                initializeInstance(valueOptional, newQualifiedFieldName, instanceValues);
+                FieldHelper.setField(declaredField, instance, valueOptional);
             }
         }
     }

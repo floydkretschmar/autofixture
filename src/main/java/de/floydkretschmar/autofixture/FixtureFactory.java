@@ -1,6 +1,6 @@
 package de.floydkretschmar.autofixture;
 
-import de.floydkretschmar.autofixture.strategies.InstantiationStrategy;
+import de.floydkretschmar.autofixture.strategies.instantiation.InstantiationStrategy;
 import de.floydkretschmar.autofixture.utils.FieldHelper;
 import lombok.Builder;
 import lombok.Singular;
