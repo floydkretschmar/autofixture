@@ -8,7 +8,6 @@ import lombok.Value;
 
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -28,7 +27,7 @@ public class FixtureFactory {
 
         final var declaredFields = fixtureClass.getDeclaredFields();
         for (final var declaredField : declaredFields) {
-            final var newQualifiedFieldName = qualifiedFieldName.equals("") ? declaredField.getName() : "%s.%s".formatted(qualifiedFieldName, declaredField.getName());
+            final var newQualifiedFieldName = FieldHelper.appendToQualifiedFieldName(qualifiedFieldName, declaredField.getName());
             if (declaredField.getType().isPrimitive() || declaredField.getType() == String.class) {
                 final var valueAsString = fixtureValues.getProperty(newQualifiedFieldName);
 

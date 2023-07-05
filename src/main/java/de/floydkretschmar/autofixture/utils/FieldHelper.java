@@ -14,4 +14,8 @@ public class FieldHelper {
             throw new RuntimeException("The value for field %s could not be set to value %s".formatted(field.getType().getSimpleName(), value), e);
         }
     }
+
+    public static String appendToQualifiedFieldName(String qualifiedFieldName, String fieldToAppend) {
+        return qualifiedFieldName.equals("") ? fieldToAppend : "%s.%s".formatted(qualifiedFieldName, fieldToAppend);
+    }
 }

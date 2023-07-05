@@ -20,6 +20,19 @@ public class ConfigurationHelperTests {
     }
 
     @Test
+    public void readConfiguration_whenCalledWithNestedProperties_shouldReturnLoadedAndFlattened() {
+        final var properties = ConfigurationHelper.readConfiguration("testNested.properties");
+
+        assertThat(properties, notNullValue());
+        assertThat(properties.getProperty("testProperty1"), equalTo("cde"));
+        assertThat(properties.getProperty("testProperty2"), equalTo("123"));
+        assertThat(properties.getProperty("testProperty3.testNestedProperty"), equalTo("fgh"));
+        assertThat(properties.getProperty("testProperty3.testNestedProperty2.testDeepNestedProperty"), equalTo("12345"));
+        assertThat(properties.getProperty("testProperty3"), nullValue());
+        assertThat(properties.getProperty("testProperty3.testNestedProperty2"), nullValue());
+    }
+
+    @Test
     public void readConfiguration_whenCalledWithNonExistentFileName_shouldThrowRuntimeException() {
         assertThrows(RuntimeException.class, () -> ConfigurationHelper.readConfiguration("doesNotExist.properties"));
     }
