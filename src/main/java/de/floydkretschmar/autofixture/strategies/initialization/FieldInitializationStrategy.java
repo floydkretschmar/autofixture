@@ -2,15 +2,19 @@ package de.floydkretschmar.autofixture.strategies.initialization;
 
 import de.floydkretschmar.autofixture.strategies.instantiation.InstantiationStrategyRegistry;
 import de.floydkretschmar.autofixture.utils.FieldHelper;
-import lombok.RequiredArgsConstructor;
+import lombok.Builder;
+import lombok.NonNull;
 
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.util.Properties;
 
-@RequiredArgsConstructor
+@Builder
 public class FieldInitializationStrategy implements InitializationStrategy {
-    private final InstantiationStrategyRegistry strategyRegistry;
+
+    @NonNull
+    private final InstantiationStrategyRegistry instantiationStrategyRegistry;
+
     @Override
     public <T> void initializeInstance(T instance, Properties instanceValues) {
         initializeInstance(instance, "", instanceValues);
@@ -31,7 +35,7 @@ public class FieldInitializationStrategy implements InitializationStrategy {
             }
             else {
                 final var fieldType = declaredField.getType();
-                final var valueOptional = strategyRegistry.createInstance(fieldType);
+                final var valueOptional = instantiationStrategyRegistry.createInstance(fieldType);
 
                 initializeInstance(valueOptional, newQualifiedFieldName, instanceValues);
                 FieldHelper.setField(declaredField, instance, valueOptional);

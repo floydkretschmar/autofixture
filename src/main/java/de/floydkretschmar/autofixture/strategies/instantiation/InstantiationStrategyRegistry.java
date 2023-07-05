@@ -12,11 +12,11 @@ import java.util.Optional;
 public class InstantiationStrategyRegistry {
     @Singular
     @NonNull
-    private List<InstantiationStrategy> fallbackInstantiationStrategies;
+    private List<InstantiationStrategy> instantiationStrategies;
 
     public  <T> T createInstance(Class<T> fixtureClass) {
         Optional<T> instance = Optional.empty();
-        for (final var creationStrategy : fallbackInstantiationStrategies) {
+        for (final var creationStrategy : instantiationStrategies) {
             instance = creationStrategy.createInstance(fixtureClass);
             if (instance.isPresent()) break;
         }

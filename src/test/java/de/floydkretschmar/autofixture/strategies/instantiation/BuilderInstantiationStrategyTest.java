@@ -1,7 +1,6 @@
-package de.floydkretschmar.autofixture.strategies;
+package de.floydkretschmar.autofixture.strategies.instantiation;
 
 import de.floydkretschmar.autofixture.common.TestClass;
-import de.floydkretschmar.autofixture.strategies.instantiation.BuilderInstantiationStrategy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

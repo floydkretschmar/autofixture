@@ -1,8 +1,7 @@
-package de.floydkretschmar.autofixture.strategies;
+package de.floydkretschmar.autofixture.strategies.initialization;
 
 import de.floydkretschmar.autofixture.common.TestClass;
 import de.floydkretschmar.autofixture.common.TestClassNested;
-import de.floydkretschmar.autofixture.strategies.initialization.FieldInitializationStrategy;
 import de.floydkretschmar.autofixture.strategies.instantiation.InstantiationStrategyRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

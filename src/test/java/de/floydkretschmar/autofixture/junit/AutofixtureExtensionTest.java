@@ -1,56 +1,41 @@
 package de.floydkretschmar.autofixture.junit;
 
 import de.floydkretschmar.autofixture.Autofixture;
-import de.floydkretschmar.autofixture.FixtureFactory;
 import de.floydkretschmar.autofixture.common.TestClass;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Properties;
-
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AutofixtureExtensionTest {
-
-    @Mock
-    private FixtureFactory fixtureFactory;
-
     @Mock
     private ExtensionContext extensionContext;
-    @Captor
-    ArgumentCaptor<Properties> fixtureValuesCaptor;
 
     @Test
     public void postProcessTestInstance_WhenTestInstanceHasAutofixtureAnnotations_shouldInitializeFixtures() {
-        when(fixtureFactory.createFixture(any(), any())).thenReturn(TestClass.builder().build());
-        final var initializer = new AutofixtureExtension(fixtureFactory);
+        final var initializer = new AutofixtureExtension();
+        final var instance = new TestInstance();
 
-        initializer.postProcessTestInstance(new TestInstance(), extensionContext);
+        initializer.postProcessTestInstance(instance, extensionContext);
 
-        verify(fixtureFactory).createFixture(any(TestClass.class.getClass()), fixtureValuesCaptor.capture());
-        final var actualFixtureValues = fixtureValuesCaptor.getValue();
-
-        assertThat(actualFixtureValues, notNullValue());
-        assertThat(actualFixtureValues.getProperty("testProperty"), equalTo("true"));
+        assertThat(instance.testFixture, notNullValue());
+        assertThat(instance.testFixture.isTestProperty(), is(true));
+        assertThat(instance.testFixture.getTestNumberProperty(), is(0));
     }
 
     @Test
     public void postProcessTestInstance_WhenTestInstanceHasNoAutofixtureAnnotations_shouldDoNothing() {
-        final var initializer = new AutofixtureExtension(fixtureFactory);
+        final var initializer = new AutofixtureExtension();
+        final var instance = new TestInstanceWithoutAnnotation();
 
-        initializer.postProcessTestInstance(new TestInstanceWithoutAnnotation(), extensionContext);
+        initializer.postProcessTestInstance(instance, extensionContext);
 
-        verifyNoInteractions(fixtureFactory);
+        assertThat(instance.testFixture, nullValue());
     }
 
     class TestInstance {
