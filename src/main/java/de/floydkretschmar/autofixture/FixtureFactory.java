@@ -1,6 +1,6 @@
 package de.floydkretschmar.autofixture;
 
-import de.floydkretschmar.autofixture.steps.creation.CreationStrategy;
+import de.floydkretschmar.autofixture.strategies.InstantiationStrategy;
 import de.floydkretschmar.autofixture.utils.FieldHelper;
 import lombok.Builder;
 import lombok.Singular;
@@ -17,7 +17,7 @@ import java.util.Properties;
 public class FixtureFactory {
 
     @Singular
-    List<CreationStrategy> creationStrategies;
+    List<InstantiationStrategy> instantiationStrategies;
 
     public <T> T createFixture(Class<T> fixtureClass, Properties fixtureValues) {
         return createFixture(fixtureClass, "", fixtureValues);
@@ -47,16 +47,16 @@ public class FixtureFactory {
     }
 
     private <T> T createFixtureInstance(Class<T> fixtureClass) {
-        if (creationStrategies.isEmpty()) throw new FixtureCreationException("No creation strategies were registered");
+        if (instantiationStrategies.isEmpty()) throw new FixtureCreationException("No creation strategies were registered");
 
         Optional<T> instance = Optional.empty();
         for (final var creationStrategy :
-                creationStrategies) {
-            instance = creationStrategy.tryCreateInstance(fixtureClass);
+                instantiationStrategies) {
+            instance = creationStrategy.createInstance(fixtureClass);
             if (instance.isPresent()) break;
         }
 
-        if (instance.isEmpty()) throw new FixtureCreationException("None of the registered creation strategies %s was able to create an instance of %s".formatted(creationStrategies, fixtureClass.getSimpleName()));
+        if (instance.isEmpty()) throw new FixtureCreationException("None of the registered creation strategies %s was able to create an instance of %s".formatted(instantiationStrategies, fixtureClass.getSimpleName()));
         return instance.get();
     }
 }
