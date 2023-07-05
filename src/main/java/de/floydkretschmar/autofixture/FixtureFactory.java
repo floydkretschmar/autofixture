@@ -1,21 +1,32 @@
 package de.floydkretschmar.autofixture;
 
+import de.floydkretschmar.autofixture.steps.creation.CreationStrategy;
 import de.floydkretschmar.autofixture.utils.FieldHelper;
+import lombok.Builder;
+import lombok.Singular;
+import lombok.Value;
 
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
-public final class FixtureFactory {
+@Builder(toBuilder = true)
+@Value
+public class FixtureFactory {
+
+    @Singular
+    List<CreationStrategy> creationStrategies;
 
     public <T> T createFixture(Class<T> fixtureClass, Properties fixtureValues) {
         return createFixture(fixtureClass, "", fixtureValues);
     }
     public <T> T createFixture(Class<T> fixtureClass, String qualifiedFieldName, Properties fixtureValues) {
-        final var declaredFields = fixtureClass.getDeclaredFields();
-        final T instance = createInstanceWithBuilder(fixtureClass);
+        final T instance = createFixtureInstance(fixtureClass);
 
+        final var declaredFields = fixtureClass.getDeclaredFields();
         for (final var declaredField : declaredFields) {
             final var newQualifiedFieldName = qualifiedFieldName.equals("") ? declaredField.getName() : "%s.%s".formatted(qualifiedFieldName, declaredField.getName());
             if (declaredField.getType().isPrimitive() || declaredField.getType() == String.class) {
@@ -36,15 +47,17 @@ public final class FixtureFactory {
         return instance;
     }
 
-    private static <T> T createInstanceWithBuilder(Class<T> fixtureClass) {
-        try {
-            final var builderMethod = fixtureClass.getDeclaredMethod("builder");
-            final var builder = builderMethod.invoke(null);
-            final var buildMethod = builder.getClass().getDeclaredMethod("build");
-            final var instance = buildMethod.invoke(builder);
-            return (T)instance;
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException exception) {
-            throw new FixtureCreationException("Unable to build fixture for class %s using the builder pattern.".formatted(fixtureClass.getSimpleName()), exception);
+    private <T> T createFixtureInstance(Class<T> fixtureClass) {
+        if (creationStrategies.isEmpty()) throw new FixtureCreationException("No creation strategies were registered");
+
+        Optional<T> instance = Optional.empty();
+        for (final var creationStrategy :
+                creationStrategies) {
+            instance = creationStrategy.tryCreateInstance(fixtureClass);
+            if (instance.isPresent()) break;
         }
+
+        if (instance.isEmpty()) throw new FixtureCreationException("None of the registered creation strategies %s was able to create an instance of %s".formatted(creationStrategies, fixtureClass.getSimpleName()));
+        return instance.get();
     }
 }
