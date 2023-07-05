@@ -10,17 +10,29 @@ import de.floydkretschmar.autofixture.strategies.instantiation.ConstructorInstan
 import de.floydkretschmar.autofixture.strategies.instantiation.InstantiationStrategies;
 import de.floydkretschmar.autofixture.utils.ConfigurationHelper;
 import de.floydkretschmar.autofixture.utils.FieldHelper;
+import lombok.Builder;
+import lombok.Value;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 
 import java.util.Arrays;
 
+@Builder
+@Value
 public class AutofixtureExtension implements TestInstancePostProcessor {
-    private static final InstantiationStrategies DEFAULT_INSTANTIATION_STRATEGIES = new InstantiationStrategies(Arrays.asList(new BuilderInstantiationStrategy(), new ConstructorInstantiationStrategy()));
+    public static final InstantiationStrategies DEFAULT_INSTANTIATION_STRATEGIES = new InstantiationStrategies(Arrays.asList(new BuilderInstantiationStrategy(), new ConstructorInstantiationStrategy()));
 
-    private static final InitializationStrategy DEFAULT_INITIALIZATION_STRATEGY = FieldInitializationStrategy.builder().instantiationStrategies(DEFAULT_INSTANTIATION_STRATEGIES).build();
+    public static final InitializationStrategy DEFAULT_INITIALIZATION_STRATEGY = FieldInitializationStrategy.builder().instantiationStrategies(DEFAULT_INSTANTIATION_STRATEGIES).build();
 
-    private static final FixtureCreationStategy DEFAULT_CREATION_STRATEGY = MultiStepFixtureCreationStrategy.builder().instantiationStrategies(DEFAULT_INSTANTIATION_STRATEGIES).initializationStrategy(DEFAULT_INITIALIZATION_STRATEGY).build();
+    @Builder.Default
+    InstantiationStrategies defaultInstantiationStrategies = DEFAULT_INSTANTIATION_STRATEGIES;
+
+    @Builder.Default
+    InitializationStrategy defaultInitializationStrategy = DEFAULT_INITIALIZATION_STRATEGY;
+
+    private FixtureCreationStategy getDefaultCreationStrategy() {
+        return MultiStepFixtureCreationStrategy.builder().instantiationStrategies(defaultInstantiationStrategies).initializationStrategy(defaultInitializationStrategy).build();
+    }
 
     @Override
     public void postProcessTestInstance(Object testInstance, ExtensionContext extensionContext) {
@@ -29,7 +41,9 @@ public class AutofixtureExtension implements TestInstancePostProcessor {
         for (final var fixtureField : declaredFixtureFields) {
             final var fixtureType = fixtureField.getType();
             final var fixtureValues = ConfigurationHelper.readConfiguration("%s.properties".formatted(fixtureType.getSimpleName()));
-            final var fixture = DEFAULT_CREATION_STRATEGY.createFixture(fixtureType, fixtureValues);
+
+            final var strategy = getDefaultCreationStrategy();
+            final var fixture = strategy.createFixture(fixtureType, fixtureValues);
             FieldHelper.setField(fixtureField, testInstance, fixture);
         }
     }

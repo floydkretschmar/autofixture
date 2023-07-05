@@ -18,7 +18,7 @@ public class AutofixtureExtensionTest {
 
     @Test
     public void postProcessTestInstance_WhenTestInstanceHasAutofixtureAnnotations_shouldInitializeFixtures() {
-        final var initializer = new AutofixtureExtension();
+        final var initializer = AutofixtureExtension.builder().build();
         final var instance = new TestInstance();
 
         initializer.postProcessTestInstance(instance, extensionContext);
@@ -30,7 +30,7 @@ public class AutofixtureExtensionTest {
 
     @Test
     public void postProcessTestInstance_WhenTestInstanceHasNoAutofixtureAnnotations_shouldDoNothing() {
-        final var initializer = new AutofixtureExtension();
+        final var initializer = AutofixtureExtension.builder().build();
         final var instance = new TestInstanceWithoutAnnotation();
 
         initializer.postProcessTestInstance(instance, extensionContext);
@@ -38,13 +38,13 @@ public class AutofixtureExtensionTest {
         assertThat(instance.testFixture, nullValue());
     }
 
-    class TestInstance {
+    static class TestInstance {
 
         @Autofixture
         private TestClass testFixture;
     }
 
-    class TestInstanceWithoutAnnotation {
+    static class TestInstanceWithoutAnnotation {
 
         private TestClass testFixture;
     }
