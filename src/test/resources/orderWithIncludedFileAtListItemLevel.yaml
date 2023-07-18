@@ -1,6 +1,11 @@
 orderNo: A001
 date: 2019-04-17
 customerName: Customer, Joe
+object:
+  nestedList:
+    - !include item.yaml
+    - !include item.yaml
+    - !include item.yaml
 orderLines:
   - item: No. 9 Sprockets
     quantity: 12

@@ -32,7 +32,6 @@ public class ConfigurationLoaderTest {
         assertThat(actualOrderConfiguration, equalTo(Files.readString(Path.of(completeConfiguration))));
     }
 
-
     @Test
     @SneakyThrows
     public void readConfiguration_whenCalledWithObjectAsIncludedConfiguration_shouldReturnComposedConfigurationAsString() {

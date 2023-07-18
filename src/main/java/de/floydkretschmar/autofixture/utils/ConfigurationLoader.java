@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public final class ConfigurationLoader {
@@ -17,7 +18,7 @@ public final class ConfigurationLoader {
     @Value
     @Builder
     static class LineData {
-        int indentationCount;
+        int whitespaces;
         LineDataType type;
     }
 
@@ -26,13 +27,13 @@ public final class ConfigurationLoader {
         OBJECT
     }
 
-    private static final Pattern includeListItemPattern = Pattern.compile("^(?<startingCharacters> *- )!include (?<fileName>.*\\.(yaml|yml)).*");
+    private static final Pattern includeListItemPattern = Pattern.compile("^(?<whitespaces> *)((?<listPrefix>- )|(?<objectPrefix>(.*: )))!include (?<fileName>.*\\.(yaml|yml)).*");
 
     public static String readConfiguration(String configurationFile) {
-        return readConfiguration(configurationFile, LineData.builder().indentationCount(0).build()).stream().reduce("", (base, latest) -> base.isBlank() ? latest : "%s\r\n%s".formatted(base, latest));
+        return readConfigurationAsList(configurationFile).stream().reduce("", (base, latest) -> base.isBlank() ? latest : "%s\r\n%s".formatted(base, latest));
     }
 
-    public static List<String> readConfiguration(String configurationFile, LineData lineData) {
+    private static List<String> readConfigurationAsList(String configurationFile) {
         final var configurationFileUrl = ConfigurationLoader.class.getClassLoader().getResource(configurationFile);
         if (configurationFileUrl == null)
             throw new ConfigurationReadException(configurationFile);
@@ -44,11 +45,21 @@ public final class ConfigurationLoader {
                 var matcher = includeListItemPattern.matcher(line);
                 if (matcher.matches()) {
                     final var includedFileName = matcher.group("fileName");
-                    final var linesOfIncludedConfiguration = readConfiguration(includedFileName, LineData.builder().type(LineDataType.LIST_ITEM).indentationCount(matcher.group("startingCharacters").length()).build());
-                    linesOfComposedConfiguration.addAll(linesOfIncludedConfiguration);
+                    final var type = Objects.nonNull(matcher.group("listPrefix")) ? LineDataType.LIST_ITEM : LineDataType.OBJECT;
+
+                    final var linesOfIncludedConfiguration = readConfigurationAsList(includedFileName);
+                    if (type == LineDataType.OBJECT) {
+                        final var whitespacesBeforeObjectName = matcher.group("whitespaces").length();
+                        linesOfComposedConfiguration.add("%s%s".formatted(" ".repeat(whitespacesBeforeObjectName), matcher.group("objectPrefix").stripTrailing()));
+                        linesOfIncludedConfiguration.forEach(includedConfigurationLine -> linesOfComposedConfiguration.add("%s%s".formatted(" ".repeat(whitespacesBeforeObjectName + 2), includedConfigurationLine)));
+                    } else {
+                        final var whitespacesBeforeHyphen = matcher.group("whitespaces").length();
+                        final var whitespacesBeforeItemContent = whitespacesBeforeHyphen + 2;
+                        linesOfComposedConfiguration.add("%s- %s".formatted(" ".repeat(whitespacesBeforeHyphen), linesOfIncludedConfiguration.get(0)));
+                        linesOfIncludedConfiguration.subList(1, linesOfIncludedConfiguration.size()).forEach(includedConfigurationLine -> linesOfComposedConfiguration.add("%s%s".formatted(" ".repeat(whitespacesBeforeItemContent), includedConfigurationLine)));
+                    }
                 } else {
-                    final var prefix = i == 0 && lineData.type == LineDataType.LIST_ITEM ? "%s%s".formatted(" ".repeat(lineData.indentationCount - 2), "- ") : " ".repeat(lineData.indentationCount);
-                    linesOfComposedConfiguration.add("%s%s".formatted(prefix, line));
+                    linesOfComposedConfiguration.add(line);
                 }
             }
             return linesOfComposedConfiguration;
