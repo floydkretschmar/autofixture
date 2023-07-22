@@ -1,12 +1,9 @@
-package de.floydkretschmar.autofixture.junit;
+package de.floydkretschmar.autofixture;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import de.floydkretschmar.autofixture.Autofixture;
-import de.floydkretschmar.autofixture.FixtureCreationException;
-import de.floydkretschmar.autofixture.utils.ConfigurationLoader;
-import de.floydkretschmar.autofixture.utils.FieldHelper;
+import de.floydkretschmar.autofixture.exceptions.FixtureCreationException;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 
@@ -27,7 +24,9 @@ public class AutofixtureExtension implements TestInstancePostProcessor {
 
         for (final var fixtureField : declaredFixtureFields) {
             final var fixtureType = fixtureField.getType();
-            final var configurationFile = "%s.yaml".formatted(fixtureType.getSimpleName().toLowerCase());
+            var className = fixtureType.getSimpleName();
+            className = className.substring(0, 1).toLowerCase() + className.substring(1);
+            final var configurationFile = "%s.yaml".formatted(className);
             final var fixtureConfiguration = ConfigurationLoader.readConfiguration(configurationFile);
 
             final Object fixture;
@@ -36,7 +35,12 @@ public class AutofixtureExtension implements TestInstancePostProcessor {
             } catch (JsonProcessingException e) {
                 throw new FixtureCreationException("Could not create autofixture for field %s because configuration file %s could not be parsed.".formatted(fixtureField.getName(), configurationFile), e);
             }
-            FieldHelper.setField(fixtureField, testInstance, fixture);
+
+            try {
+                FieldHelper.setField(fixtureField, testInstance, fixture);
+            } catch (Exception e) {
+                throw new FixtureCreationException("Could not create autofixture for field %s because the instance of autofixture could not be assigned to the field.", e);
+            }
         }
     }
 }

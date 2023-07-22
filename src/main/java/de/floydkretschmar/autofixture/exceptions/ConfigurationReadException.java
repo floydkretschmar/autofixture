@@ -1,4 +1,4 @@
-package de.floydkretschmar.autofixture.utils;
+package de.floydkretschmar.autofixture.exceptions;
 
 public class ConfigurationReadException extends RuntimeException {
     public ConfigurationReadException(String configurationPath) {

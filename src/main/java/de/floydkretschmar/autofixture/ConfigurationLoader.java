@@ -1,4 +1,6 @@
-package de.floydkretschmar.autofixture.utils;
+package de.floydkretschmar.autofixture;
+
+import de.floydkretschmar.autofixture.exceptions.ConfigurationReadException;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -11,7 +13,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public final class ConfigurationLoader {
-    private static final Pattern includePattern = Pattern.compile("^(?<whitespaces> *)((?<listPrefix>- )|(?<objectPrefix>(.*: )))!include (?<fileName>.*\\.(yaml|yml)).*");
+    private static final Pattern includePattern = Pattern.compile("^(?<whitespaces> *)((?<listPrefix>- )|(?<objectPrefix>(.*: )))!include (?<fileName>.*\\.ya?ml)");
 
     public static String readConfiguration(String configurationFile) {
         return readConfigurationAsList(configurationFile).reduce("", (base, latest) -> base.isBlank() ? latest : "%s\r\n%s".formatted(base, latest));
@@ -26,7 +28,7 @@ public final class ConfigurationLoader {
 
             return linesOfOriginalConfiguration.stream().flatMap(line -> {
                 var matcher = includePattern.matcher(line);
-                return matcher.matches() ? loadAndProcessSubConfiguration(matcher) : Stream.of(line);
+                return matcher.find() ? loadAndProcessSubConfiguration(matcher) : Stream.of(line);
             });
         } catch (IOException | OutOfMemoryError | SecurityException | IllegalArgumentException |
                  FileSystemNotFoundException | URISyntaxException e) {

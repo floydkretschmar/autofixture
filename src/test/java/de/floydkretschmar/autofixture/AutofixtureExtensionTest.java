@@ -1,6 +1,6 @@
-package de.floydkretschmar.autofixture.junit;
+package de.floydkretschmar.autofixture;
 
-import de.floydkretschmar.autofixture.Autofixture;
+import de.floydkretschmar.autofixture.exceptions.FixtureCreationException;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class AutofixtureExtensionTest {
@@ -48,6 +49,25 @@ public class AutofixtureExtensionTest {
         assertThat(instance.orderFixture, nullValue());
     }
 
+    @Test
+    public void postProcessTestInstance_WhenTestInstanceHasAnnotationOnInvalidField_shouldDoThrowFixtureCreationException() {
+        final var initializer = new AutofixtureExtension();
+        final var instance = new TestInvalidInstance();
+
+        final var exception = assertThrows(FixtureCreationException.class, () -> initializer.postProcessTestInstance(instance, extensionContext));
+        assertThat(exception.getMessage(), containsString("because the instance of autofixture could not be assigned to the field."));
+    }
+
+    @Test
+    public void postProcessTestInstance_WhenConfigIsInvalidYaml_shouldDoThrowFixtureCreationException() {
+        final var initializer = new AutofixtureExtension();
+        final var instance = new TestInvalidConfig();
+
+        final var exception = assertThrows(FixtureCreationException.class, () -> initializer.postProcessTestInstance(instance, extensionContext));
+        assertThat(exception.getMessage(), containsString("because configuration file"));
+        assertThat(exception.getMessage(), containsString("could not be parsed."));
+    }
+
     static class TestInstance {
 
         @Autofixture
@@ -57,6 +77,21 @@ public class AutofixtureExtensionTest {
     static class TestInstanceWithoutAnnotation {
 
         private Order orderFixture;
+    }
+
+    static class TestInvalidInstance {
+        @Autofixture
+        private final static Order invalidAutoFixture = Order.builder().build();
+    }
+
+    static class TestInvalidConfig {
+
+        @Autofixture
+        private FixtureClassWithInvalidConfig fixture;
+    }
+
+    static class FixtureClassWithInvalidConfig {
+
     }
 
     @Builder

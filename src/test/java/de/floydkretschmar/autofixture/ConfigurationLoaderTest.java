@@ -1,7 +1,6 @@
 package de.floydkretschmar.autofixture;
 
-import de.floydkretschmar.autofixture.utils.ConfigurationLoader;
-import de.floydkretschmar.autofixture.utils.ConfigurationReadException;
+import de.floydkretschmar.autofixture.exceptions.ConfigurationReadException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
