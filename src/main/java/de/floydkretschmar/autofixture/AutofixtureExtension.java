@@ -7,6 +7,7 @@ import de.floydkretschmar.autofixture.exceptions.FixtureCreationException;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 
 public class AutofixtureExtension implements TestInstancePostProcessor {
@@ -24,16 +25,15 @@ public class AutofixtureExtension implements TestInstancePostProcessor {
 
         for (final var fixtureField : declaredFixtureFields) {
             final var fixtureType = fixtureField.getType();
-            var className = fixtureType.getSimpleName();
-            className = className.substring(0, 1).toLowerCase() + className.substring(1);
-            final var configurationFile = "%s.yaml".formatted(className);
-            final var fixtureConfiguration = ConfigurationLoader.readConfiguration(configurationFile);
+            String configurationFilename = getConfigurationFilename(fixtureField, fixtureType);
+
+            final var fixtureConfiguration = ConfigurationLoader.readConfiguration(configurationFilename);
 
             final Object fixture;
             try {
                 fixture = objectMapper.readValue(fixtureConfiguration, fixtureType);
             } catch (JsonProcessingException e) {
-                throw new FixtureCreationException("Could not create autofixture for field %s because configuration file %s could not be parsed.".formatted(fixtureField.getName(), configurationFile), e);
+                throw new FixtureCreationException("Could not create autofixture for field %s because configuration file %s could not be parsed.".formatted(fixtureField.getName(), configurationFilename), e);
             }
 
             try {
@@ -42,5 +42,17 @@ public class AutofixtureExtension implements TestInstancePostProcessor {
                 throw new FixtureCreationException("Could not create autofixture for field %s because the instance of autofixture could not be assigned to the field.", e);
             }
         }
+    }
+
+    private static String getConfigurationFilename(Field fixtureField, Class<?> fixtureType) {
+        final var autofixtureAnnotation = fixtureField.getAnnotation(Autofixture.class);
+
+        var configurationFile = autofixtureAnnotation.configurationResourcePath();
+        if (configurationFile.isEmpty()) {
+            var className = fixtureType.getSimpleName();
+            className = className.substring(0, 1).toLowerCase() + className.substring(1);
+            configurationFile = "%s.yaml".formatted(className);
+        }
+        return configurationFile;
     }
 }
