@@ -17,8 +17,8 @@ public class ConfigurationLoaderTest {
     @Test
     @SneakyThrows
     public void readConfiguration_whenCalledWithValidFileName_shouldReturnFileAsString() {
-        final var configurationFile = ConfigurationLoaderTest.class.getClassLoader().getResource("order.yaml").toURI();
-        final var actualOrderConfiguration = ConfigurationLoader.readConfiguration("order.yaml");
+        final var configurationFile = ConfigurationLoaderTest.class.getClassLoader().getResource("configuration-loader/composedOrderWithListItems.yaml").toURI();
+        final var actualOrderConfiguration = ConfigurationLoader.readConfiguration("configuration-loader/composedOrderWithListItems.yaml");
 
         assertThat(actualOrderConfiguration, equalTo(Files.readString(Path.of(configurationFile))));
     }
@@ -26,8 +26,8 @@ public class ConfigurationLoaderTest {
     @Test
     @SneakyThrows
     public void readConfiguration_whenCalledWithListItemAsIncludedConfiguration_shouldReturnComposedConfigurationAsString() {
-        final var completeConfiguration = ConfigurationLoaderTest.class.getClassLoader().getResource("order.yaml").toURI();
-        final var actualOrderConfiguration = ConfigurationLoader.readConfiguration("orderWithIncludedFileAtListItemLevel.yaml");
+        final var completeConfiguration = ConfigurationLoaderTest.class.getClassLoader().getResource("configuration-loader/composedOrderWithListItems.yaml").toURI();
+        final var actualOrderConfiguration = ConfigurationLoader.readConfiguration("configuration-loader/orderWithIncludedFileAtListItemLevel.yaml");
 
         assertThat(actualOrderConfiguration, equalTo(Files.readString(Path.of(completeConfiguration))));
     }
@@ -35,8 +35,8 @@ public class ConfigurationLoaderTest {
     @Test
     @SneakyThrows
     public void readConfiguration_whenCalledWithObjectAsIncludedConfiguration_shouldReturnComposedConfigurationAsString() {
-        final var completeConfiguration = ConfigurationLoaderTest.class.getClassLoader().getResource("orderWithAddress.yaml").toURI();
-        final var actualOrderConfiguration = ConfigurationLoader.readConfiguration("orderWithIncludedFileAtObjectLevel.yaml");
+        final var completeConfiguration = ConfigurationLoaderTest.class.getClassLoader().getResource("configuration-loader/composedOrderWithObjects.yaml").toURI();
+        final var actualOrderConfiguration = ConfigurationLoader.readConfiguration("configuration-loader/orderWithIncludedFileAtObjectLevel.yaml");
 
         assertThat(actualOrderConfiguration, equalTo(Files.readString(Path.of(completeConfiguration))));
     }

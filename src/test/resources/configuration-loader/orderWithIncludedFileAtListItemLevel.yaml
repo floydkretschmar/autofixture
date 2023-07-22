@@ -3,9 +3,9 @@ date: 2019-04-17
 customerName: Customer, Joe
 object:
   nestedList:
-    - !include item.yaml
-    - !include item.yaml
-    - !include item.yaml
+    - !include configuration-loader/item.yaml
+    - !include configuration-loader/item.yaml
+    - !include configuration-loader/item.yaml
 orderLines:
   - item: No. 9 Sprockets
     quantity: 12
@@ -13,4 +13,4 @@ orderLines:
   - item: Widget (10mm)
     quantity: 4
     unitPrice: 3.45
-  - !include item.yaml
+  - !include configuration-loader/item.yaml

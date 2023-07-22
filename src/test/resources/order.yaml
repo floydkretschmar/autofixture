@@ -1,17 +1,6 @@
 orderNo: A001
 date: 2019-04-17
 customerName: Customer, Joe
-object:
-  nestedList:
-    - item: Sub-item
-      quantity: 2
-      unitPrice: 16
-    - item: Sub-item
-      quantity: 2
-      unitPrice: 16
-    - item: Sub-item
-      quantity: 2
-      unitPrice: 16
 orderLines:
   - item: No. 9 Sprockets
     quantity: 12
@@ -19,6 +8,3 @@ orderLines:
   - item: Widget (10mm)
     quantity: 4
     unitPrice: 3.45
-  - item: Sub-item
-    quantity: 2
-    unitPrice: 16

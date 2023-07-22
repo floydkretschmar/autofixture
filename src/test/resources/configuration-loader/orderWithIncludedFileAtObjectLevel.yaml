@@ -1,9 +1,9 @@
 orderNo: A001
 date: 2019-04-17
 customerName: Customer, Joe
-customerAddress: !include address.yaml
+customerAddress: !include configuration-loader/address.yaml
 object:
-  nested: !include item.yaml
+  nested: !include configuration-loader/item.yaml
 orderLines:
   - item: No. 9 Sprockets
     quantity: 12
