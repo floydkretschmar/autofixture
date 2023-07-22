@@ -1,0 +1,23 @@
+orderNo: A001
+date: 2019-04-17
+customerName: Customer, Joe
+customerAddress:
+  street: Main Str.
+  houseNo: 12
+  zipCode: 12345
+  City: Wondertown
+  ContactData:
+    PhoneNumber: 123456789
+    MobileNumber: 987654321
+object:
+  nested:
+    item: Sub-item
+    quantity: 2
+    unitPrice: 16
+orderLines:
+  - item: No. 9 Sprockets
+    quantity: 12
+    unitPrice: 1.23
+  - item: Widget (10mm)
+    quantity: 4
+    unitPrice: 3.45

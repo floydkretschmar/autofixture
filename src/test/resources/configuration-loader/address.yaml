@@ -1,0 +1,5 @@
+street: Main Str.
+houseNo: 12
+zipCode: 12345
+City: Wondertown
+ContactData: !include configuration-loader/phone.yaml
