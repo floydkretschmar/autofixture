@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-public final class ConfigurationLoader {
+final class ConfigurationLoader {
     private static final Pattern includePattern = Pattern.compile("^(?<whitespaces> *)((?<listPrefix>- )|(?<objectPrefix>(.*: )))!include (?<fileName>.*\\.ya?ml)");
 
     public static String readConfiguration(String configurationFile) {
