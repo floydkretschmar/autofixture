@@ -1,6 +1,6 @@
 # Autofixture
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://github.com/floydkretschmar/autofixture/LICENSE.txt)
+[![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://github.com/floydkretschmar/autofixture/blob/master/LICENSE.txt)
 
 * [What is Autofixture?](#what-is-mapstruct)
 * [Requirements](#requirements)
