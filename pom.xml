@@ -18,6 +18,19 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <name>Floyd Kretschmar</name>
+            <email>floyd.kretschmar@gmail.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:floydkretschmar/autofixture.git</connection>
+        <developerConnection>scm:git:ssh://github.com:floydkretschmar/autofixture.git</developerConnection>
+        <url>https://github.com/floydkretschmar/autofixture.git</url>
+    </scm>
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
