@@ -56,7 +56,7 @@ in this case order.yaml) in the base resource path.
 
 ## Requirements
 
-Autofixture requires Java 11 or later and JUnit 5.
+Autofixture requires Java 17 or later and JUnit 5.
 
 ## Licensing
 
