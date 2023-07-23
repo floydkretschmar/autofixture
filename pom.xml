@@ -7,10 +7,13 @@
     <groupId>de.floydkretschmar</groupId>
     <artifactId>autofixture</artifactId>
     <version>0.0.1</version>
+
+    <name>autofixture</name>
     <description>
         This project is a library for automatically creating test fixtures from configuration files in the yaml format.
     </description>
     <url>https://github.com/floydkretschmar/autofixture</url>
+
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
@@ -22,6 +25,8 @@
         <developer>
             <name>Floyd Kretschmar</name>
             <email>floyd.kretschmar@gmail.com</email>
+            <organization>Private</organization>
+            <organizationUrl>https://github.com/floydkretschmar/</organizationUrl>
         </developer>
     </developers>
 
